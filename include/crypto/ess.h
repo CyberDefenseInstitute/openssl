@@ -12,7 +12,7 @@
 # pragma once
 
 /*-
- * IssuerSerial ::= SEQUENCE {
+ * ISSUER_SERIAL ::= SEQUENCE {
  *        issuer                  GeneralNames,
  *        serialNumber            CertificateSerialNumber
  * }
@@ -26,7 +26,7 @@ struct ESS_issuer_serial {
 /*-
  * ESSCertID ::=  SEQUENCE {
  *        certHash                Hash,
- *        issuerSerial            IssuerSerial OPTIONAL
+ *        issuerSerial            ISSUER_SERIAL OPTIONAL
  * }
  */
 
@@ -51,7 +51,7 @@ struct ESS_signing_cert {
  * ESSCertIDv2 ::=  SEQUENCE {
  *        hashAlgorithm           AlgorithmIdentifier DEFAULT id-sha256,
  *        certHash                Hash,
- *        issuerSerial            IssuerSerial OPTIONAL
+ *        issuerSerial            ISSUER_SERIAL OPTIONAL
  * }
  */
 

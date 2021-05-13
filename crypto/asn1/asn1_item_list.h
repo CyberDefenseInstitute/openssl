@@ -151,6 +151,7 @@ static ASN1_ITEM_EXP *asn1_item_list[] = {
     ASN1_ITEM_ref(USERNOTICE),
     ASN1_ITEM_ref(X509_ALGORS),
     ASN1_ITEM_ref(X509_ALGOR),
+    ASN1_ITEM_ref(X509_ACERT),
     ASN1_ITEM_ref(X509_ATTRIBUTE),
     ASN1_ITEM_ref(X509_CERT_AUX),
     ASN1_ITEM_ref(X509_CINF),

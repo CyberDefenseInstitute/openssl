@@ -1011,6 +1011,16 @@ const ASN1_PRINTABLESTRING *PROFESSION_INFO_get0_registrationNumber(
 void PROFESSION_INFO_set0_registrationNumber(
     PROFESSION_INFO *pi, ASN1_PRINTABLESTRING *rn);
 
+typedef struct x509ACert_st X509_ACERT;
+typedef struct x509_acert_digest_info_st OBJECT_DIGEST_INFO;
+typedef struct IssueSerial_st ISSUER_SERIAL;
+typedef struct ACertIssuer_v2Form_st ACERT_ISSUER_V2FORM;
+typedef struct ACertIssuer_st ACERT_ISSUER;
+typedef struct Holder_st HOLDER;
+typedef struct x509ACertInfo_st X509_ACERT_INFO;
+
+DECLARE_ASN1_FUNCTIONS(X509_ACERT)
+
 # ifdef  __cplusplus
 }
 # endif
