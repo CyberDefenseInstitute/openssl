@@ -465,7 +465,6 @@ typedef struct x509_purpose_st {
     generate_stack_macros("X509_PURPOSE");
 -}
 
-
 # define X509_PURPOSE_SSL_CLIENT         1
 # define X509_PURPOSE_SSL_SERVER         2
 # define X509_PURPOSE_NS_SSL_SERVER      3
