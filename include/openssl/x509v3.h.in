@@ -1012,12 +1012,32 @@ void PROFESSION_INFO_set0_registrationNumber(
     PROFESSION_INFO *pi, ASN1_PRINTABLESTRING *rn);
 
 typedef struct x509ACert_st X509_ACERT;
-typedef struct x509_acert_digest_info_st OBJECT_DIGEST_INFO;
-typedef struct IssueSerial_st ISSUER_SERIAL;
-typedef struct ACertIssuer_v2Form_st ACERT_ISSUER_V2FORM;
-typedef struct ACertIssuer_st ACERT_ISSUER;
-typedef struct Holder_st HOLDER;
-typedef struct x509ACertInfo_st X509_ACERT_INFO;
+
+const GENERAL_NAMES *X509_ACERT_get0_holder_entityName(const X509_ACERT *x);
+void X509_ACERT_get0_holder_baseCertId(GENERAL_NAMES **issuer,
+                                       ASN1_INTEGER **serial,
+                                       ASN1_BIT_STRING **uid,
+                                       const X509_ACERT *x);
+void X509_ACERT_get0_holder_digest(int type, X509_ALGOR **digestAlgorithm,
+                                   ASN1_BIT_STRING **digest,
+                                   const X509_ACERT *x);
+const X509_NAME *X509_ACERT_get0_issuerName(const X509_ACERT *x);
+long X509_ACERT_get_version(const X509_ACERT *x);
+void X509_ACERT_get0_signature(const X509_ACERT *x,
+         const ASN1_BIT_STRING **psig, const X509_ALGOR **palg);
+X509_ALGOR *X509_ACERT_get0_info_signature(const X509_ACERT *x);
+ASN1_INTEGER *X509_ACERT_get_serialNumber(X509_ACERT *x);
+const ASN1_TIME *X509_ACERT_get0_notBefore(const X509_ACERT *x);
+const ASN1_TIME *X509_ACERT_get0_notAfter(const X509_ACERT *x);
+int X509_ACERT_get_attr_count(const X509_ACERT *x);
+int X509_ACERT_get_attr_by_NID(const X509_ACERT *x, int nid, int lastpos);
+int X509_ACERT_get_attr_by_OBJ(const X509_ACERT *x, const ASN1_OBJECT *obj, int lastpos);
+X509_ATTRIBUTE *X509_ACERT_get_attr(const X509_ACERT *x, int loc);
+X509_ATTRIBUTE *X509_ACERT_delete_attr(X509_ACERT *x, int loc);
+int X509_ACERT_add1_attr(X509_ACERT *x, X509_ATTRIBUTE *attr);
+ASN1_BIT_STRING *X509_ACERT_get0_issuerUID(X509_ACERT *x);
+const STACK_OF(X509_EXTENSION) *X509_ACERT_get0_extensions(const X509_ACERT *x);
+
 
 DECLARE_ASN1_FUNCTIONS(X509_ACERT)
 

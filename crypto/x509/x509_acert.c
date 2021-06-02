@@ -43,7 +43,6 @@ ASN1_SEQUENCE(HOLDER) = {
     ASN1_IMP_OPT(HOLDER, objectDigestInfo, OBJECT_DIGEST_INFO, 2),
 } ASN1_SEQUENCE_END(HOLDER)
 
-
 ASN1_SEQUENCE(X509_ACERT_INFO) = {
     ASN1_EMBED(X509_ACERT_INFO, version, ASN1_INTEGER),
     ASN1_EMBED(X509_ACERT_INFO, holder, HOLDER),
@@ -52,7 +51,7 @@ ASN1_SEQUENCE(X509_ACERT_INFO) = {
     ASN1_EMBED(X509_ACERT_INFO, serialNumber, ASN1_INTEGER),
     ASN1_EMBED(X509_ACERT_INFO, validityPeriod, X509_ACERT_VAL),
     ASN1_SEQUENCE_OF(X509_ACERT_INFO, attributes, X509_ATTRIBUTE),
-    ASN1_OPT_EMBED(X509_ACERT_INFO, issuerUID, ASN1_BIT_STRING),
+    ASN1_OPT(X509_ACERT_INFO, issuerUID, ASN1_BIT_STRING),
     ASN1_SEQUENCE_OF_OPT(X509_ACERT_INFO, extensions, X509_EXTENSION),
 } ASN1_SEQUENCE_END(X509_ACERT_INFO)
 
@@ -63,3 +62,136 @@ ASN1_SEQUENCE(X509_ACERT) = {
 } ASN1_SEQUENCE_END(X509_ACERT)
 
 IMPLEMENT_ASN1_FUNCTIONS(X509_ACERT)
+
+long X509_ACERT_get_version(const X509_ACERT *x)
+{
+    return ASN1_INTEGER_get(&x->acinfo->version);
+}
+
+void X509_ACERT_get0_signature(const X509_ACERT *x,
+                               const ASN1_BIT_STRING **psig,
+                               const X509_ALGOR **palg)
+{
+    if (*psig)
+        *psig = &x->signature;
+    if (*palg)
+        *palg = &x->sig_alg;
+}
+
+const GENERAL_NAMES *X509_ACERT_get0_holder_entityName(const X509_ACERT *x)
+{
+        return x->acinfo->holder.entityName;
+}
+
+void X509_ACERT_get0_holder_baseCertId(GENERAL_NAMES **issuer,
+                                       ASN1_INTEGER **serial,
+                                       ASN1_BIT_STRING **uid,
+                                       const X509_ACERT *x)
+{
+    ISSUER_SERIAL *baseCertId = x->acinfo->holder.baseCertificateID;
+    if (!baseCertId)
+        return;
+
+    if (issuer)
+        *issuer = baseCertId->issuer;
+
+    if (serial)
+        *serial = &baseCertId->serial;
+
+    if (uid)
+        *uid = baseCertId->issuerUID;
+}
+
+void X509_ACERT_get0_holder_digest(int type, X509_ALGOR **digestAlgorithm,
+                                   ASN1_BIT_STRING **digest,
+                                   const X509_ACERT *x)
+{
+    OBJECT_DIGEST_INFO *digestInfo = x->acinfo->holder.objectDigestInfo;
+    if (!digestInfo) {
+        return;
+    }
+
+    if (digestAlgorithm)
+        *digestAlgorithm = digestInfo->digestAlgorithm;
+    if (*digest)
+        *digest = digestInfo->objectDigest;
+}
+
+const X509_NAME *X509_ACERT_get0_issuerName( const X509_ACERT *x)
+{
+    GENERAL_NAMES *issuerNames = x->acinfo->issuer.u.v2Form->issuerName;
+    GENERAL_NAME *name;
+    if (sk_GENERAL_NAME_num(issuerNames) != 1)
+        return NULL;
+
+    name = sk_GENERAL_NAME_value(issuerNames, 0);
+    if (name->type != GEN_DIRNAME)
+        return NULL;
+    return name->d.directoryName;
+}
+
+X509_ALGOR *X509_ACERT_get0_info_signature(const X509_ACERT *x)
+{
+    return &x->acinfo->signature;
+}
+
+ASN1_INTEGER *X509_ACERT_get_serialNumber(X509_ACERT *x)
+{
+    return &x->acinfo->serialNumber;
+}
+
+/* TODO: These need to be GENERALIZED_TIME */
+const ASN1_GENERALIZEDTIME *X509_ACERT_get0_notBefore(const X509_ACERT *x)
+{
+    return x->acinfo->validityPeriod.notBefore;
+}
+
+const ASN1_GENERALIZEDTIME *X509_ACERT_get0_notAfter(const X509_ACERT *x)
+{
+    return x->acinfo->validityPeriod.notAfter;
+}
+
+/* Attribute management functions */
+
+int X509_ACERT_get_attr_count(const X509_ACERT *x)
+{
+    return X509at_get_attr_count(x->acinfo->attributes);
+}
+
+int X509_ACERT_get_attr_by_NID(const X509_ACERT *x, int nid, int lastpos)
+{
+    return X509at_get_attr_by_NID(x->acinfo->attributes, nid, lastpos);
+}
+
+int X509_ACERT_get_attr_by_OBJ(const X509_ACERT *x, const ASN1_OBJECT *obj,
+                               int lastpos)
+{
+    return X509at_get_attr_by_OBJ(x->acinfo->attributes, obj, lastpos);
+}
+
+X509_ATTRIBUTE *X509_ACERT_get_attr(const X509_ACERT *x, int loc)
+{
+    return X509at_get_attr(x->acinfo->attributes, loc);
+}
+
+X509_ATTRIBUTE *X509_ACERT_delete_attr(X509_ACERT *x, int loc)
+{
+    return X509at_delete_attr(x->acinfo->attributes, loc);
+}
+
+int X509_ACERT_add1_attr(X509_ACERT *x, X509_ATTRIBUTE *attr)
+{
+    if (X509at_add1_attr(&x->acinfo->attributes, attr))
+        return 1;
+    return 0;
+}
+
+ASN1_BIT_STRING *X509_ACERT_get0_issuerUID(X509_ACERT *x)
+{
+    return x->acinfo->issuerUID;
+}
+
+const STACK_OF(X509_EXTENSION) *X509_ACERT_get0_extensions(const X509_ACERT *x)
+{
+    return x->acinfo->extensions;
+}

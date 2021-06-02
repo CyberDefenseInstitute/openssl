@@ -12,8 +12,15 @@
 typedef enum {
   X509_ACERT_DIGEST_PUBLIC_KEY,
   X509_ACERT_DIGEST_PUBLIC_KEY_CERT,
-  X509_ACERT_DIGEST_OTHER,        /* must not be used in v2 */
+  X509_ACERT_DIGEST_OTHER,        /* must not be used in RFC 5755 profile */
 } X509_ACERT_DIGEST_OBJECT_TYPE;
+
+typedef struct x509_acert_digest_info_st OBJECT_DIGEST_INFO;
+typedef struct IssueSerial_st ISSUER_SERIAL;
+typedef struct ACertIssuer_v2Form_st ACERT_ISSUER_V2FORM;
+typedef struct ACertIssuer_st ACERT_ISSUER;
+typedef struct Holder_st HOLDER;
+typedef struct x509ACertInfo_st X509_ACERT_INFO;
 
 struct x509_acert_digest_info_st {
     X509_ACERT_DIGEST_OBJECT_TYPE digestObjectType;  /* ENUMERATED */
@@ -56,7 +63,7 @@ struct x509ACertInfo_st {
     ASN1_INTEGER serialNumber;
     X509_ACERT_VAL validityPeriod;
     STACK_OF(X509_ATTRIBUTE) *attributes;
-    ASN1_BIT_STRING issuerUID;
+    ASN1_BIT_STRING *issuerUID;
     X509_EXTENSIONS *extensions;
 };
 
