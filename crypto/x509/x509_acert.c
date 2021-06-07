@@ -78,12 +78,25 @@ void X509_ACERT_get0_signature(const X509_ACERT *x,
         *palg = &x->sig_alg;
 }
 
-const GENERAL_NAMES *X509_ACERT_get0_holder_entityName(const X509_ACERT *x)
+static X509_NAME *get_dirName(const GENERAL_NAMES *names)
 {
-        return x->acinfo->holder.entityName;
+        GENERAL_NAME *dirName;
+        if (sk_GENERAL_NAME_num(names) != 1)
+            return NULL;
+
+        dirName = sk_GENERAL_NAME_value(names, 0);
+        if (dirName->type != GEN_DIRNAME)
+            return NULL;
+
+        return dirName->d.directoryName;
 }
 
-void X509_ACERT_get0_holder_baseCertId(GENERAL_NAMES **issuer,
+const X509_NAME *X509_ACERT_get0_holder_entityName(const X509_ACERT *x)
+{
+        return get_dirName(x->acinfo->holder.entityName);
+}
+
+void X509_ACERT_get0_holder_baseCertId(X509_NAME **issuer,
                                        ASN1_INTEGER **serial,
                                        ASN1_BIT_STRING **uid,
                                        const X509_ACERT *x)
@@ -93,7 +106,7 @@ void X509_ACERT_get0_holder_baseCertId(GENERAL_NAMES **issuer,
         return;
 
     if (issuer)
-        *issuer = baseCertId->issuer;
+        *issuer = get_dirName(baseCertId->issuer);
 
     if (serial)
         *serial = &baseCertId->serial;
@@ -119,15 +132,7 @@ void X509_ACERT_get0_holder_digest(int type, X509_ALGOR **digestAlgorithm,
 
 const X509_NAME *X509_ACERT_get0_issuerName( const X509_ACERT *x)
 {
-    GENERAL_NAMES *issuerNames = x->acinfo->issuer.u.v2Form->issuerName;
-    GENERAL_NAME *name;
-    if (sk_GENERAL_NAME_num(issuerNames) != 1)
-        return NULL;
-
-    name = sk_GENERAL_NAME_value(issuerNames, 0);
-    if (name->type != GEN_DIRNAME)
-        return NULL;
-    return name->d.directoryName;
+    return get_dirName(x->acinfo->issuer.u.v2Form->issuerName);
 }
 
 X509_ALGOR *X509_ACERT_get0_info_signature(const X509_ACERT *x)
@@ -140,7 +145,6 @@ ASN1_INTEGER *X509_ACERT_get_serialNumber(X509_ACERT *x)
     return &x->acinfo->serialNumber;
 }
 
-/* TODO: These need to be GENERALIZED_TIME */
 const ASN1_GENERALIZEDTIME *X509_ACERT_get0_notBefore(const X509_ACERT *x)
 {
     return x->acinfo->validityPeriod.notBefore;

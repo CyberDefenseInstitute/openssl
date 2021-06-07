@@ -1047,8 +1047,8 @@ int IETF_ATTR_SYNTAX_print_ex(BIO *bp, IETF_ATTR_SYNTAX *a, int indent);
 
 typedef struct x509ACert_st X509_ACERT;
 
-const GENERAL_NAMES *X509_ACERT_get0_holder_entityName(const X509_ACERT *x);
-void X509_ACERT_get0_holder_baseCertId(GENERAL_NAMES **issuer,
+const X509_NAME *X509_ACERT_get0_holder_entityName(const X509_ACERT *x);
+void X509_ACERT_get0_holder_baseCertId(X509_NAME **issuer,
                                        ASN1_INTEGER **serial,
                                        ASN1_BIT_STRING **uid,
                                        const X509_ACERT *x);
@@ -1071,6 +1071,7 @@ X509_ATTRIBUTE *X509_ACERT_delete_attr(X509_ACERT *x, int loc);
 int X509_ACERT_add1_attr(X509_ACERT *x, X509_ATTRIBUTE *attr);
 ASN1_BIT_STRING *X509_ACERT_get0_issuerUID(X509_ACERT *x);
 const STACK_OF(X509_EXTENSION) *X509_ACERT_get0_extensions(const X509_ACERT *x);
+int X509_ACERT_print(BIO *bp, X509_ACERT *x);
 
 
 DECLARE_ASN1_FUNCTIONS(X509_ACERT)
