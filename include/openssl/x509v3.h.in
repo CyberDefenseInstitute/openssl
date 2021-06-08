@@ -1011,6 +1011,40 @@ const ASN1_PRINTABLESTRING *PROFESSION_INFO_get0_registrationNumber(
 void PROFESSION_INFO_set0_registrationNumber(
     PROFESSION_INFO *pi, ASN1_PRINTABLESTRING *rn);
 
+#define IETFAS_OCTETS  0
+#define IETFAS_OID     1
+#define IETFAS_STRING  2
+
+typedef struct IETF_ATTR_SYNTAX_VALUE_st {
+    int type;
+    union {
+        ASN1_OCTET_STRING *octets;
+        ASN1_OBJECT *oid;
+        ASN1_UTF8STRING *string;
+    } u;
+} IETF_ATTR_SYNTAX_VALUE;
+
+{-
+    generate_stack_macros("IETF_ATTR_SYNTAX_VALUE");
+-}
+
+typedef struct IETF_ATTR_SYNTAX_st {
+    GENERAL_NAMES *policyAuthority;
+    STACK_OF(IETF_ATTR_SYNTAX_VALUE) *values;
+} IETF_ATTR_SYNTAX;
+
+DECLARE_ASN1_ITEM(IETF_ATTR_SYNTAX_VALUE)
+DECLARE_ASN1_FUNCTIONS(IETF_ATTR_SYNTAX)
+
+const GENERAL_NAMES *
+IETF_ATTR_SYNTAX_get0_policyAuthority(const IETF_ATTR_SYNTAX *a);
+
+int IETF_ATTR_SYNTAX_get_values(const IETF_ATTR_SYNTAX *a);
+void *IETF_ATTR_SYNTAX_get0_value(const IETF_ATTR_SYNTAX *a, int ind, int *type);
+int IETF_ATTR_SYNTAX_print_ex(BIO *bp, IETF_ATTR_SYNTAX *a, int indent);
+
+#define X509_ACERT_VERSION_2 1
+
 typedef struct x509ACert_st X509_ACERT;
 
 const GENERAL_NAMES *X509_ACERT_get0_holder_entityName(const X509_ACERT *x);
