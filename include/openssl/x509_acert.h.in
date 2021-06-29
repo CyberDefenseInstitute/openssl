@@ -81,6 +81,7 @@ void X509_ACERT_set0_holder_digest(X509_ACERT *x,
                                    OSSL_OBJECT_DIGEST_INFO *dinfo);
 
 int X509_ACERT_verify(X509_ACERT *a, EVP_PKEY *r);
+int X509_ACERT_verify_cert(X509_ACERT *acert, X509 *holder, X509 *issuer);
 
 int X509_ACERT_add1_attr(X509_ACERT *x, X509_ATTRIBUTE *attr);
 int X509_ACERT_add1_attr_by_OBJ(X509_ACERT *x, const ASN1_OBJECT *obj,
