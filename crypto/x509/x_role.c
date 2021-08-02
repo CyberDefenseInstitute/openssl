@@ -9,7 +9,7 @@
 
 #include <openssl/err.h>
 #include <openssl/asn1t.h>
-#include <openssl/x509v3.h>
+#include <openssl/x509_acert.h>
 
 /*-
  * Definition of RoleSyntax from RFC 5755 4.4.5
